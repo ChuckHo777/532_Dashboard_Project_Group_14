@@ -3,12 +3,13 @@ import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output
 import altair as alt
+import numpy as np
 import pandas as pd
 
 
 # Read in global data
 #testtest
-attrition = pd.read_csv("../data/WA_Fn-UseC_-HR-Employee-Attrition.csv")
+df = pd.read_csv("../data/WA_Fn-UseC_-HR-Employee-Attrition.csv")
 
 # Setup app and layout/frontend
 app = dash.Dash(__name__,  external_stylesheets=['https://codepen.io/chriddyp/pen/bWLwgP.css'])
@@ -20,7 +21,7 @@ app.layout = html.Div([
         style={'border-width': '0', 'width': '100%', 'height': '400px'}),
     dcc.Dropdown(
         id='gender-widget',
-        value='Female',  # REQUIRED to show the plot on the first page load
+        value='',  # REQUIRED to show the plot on the first page load
         options=[
             {'label': "Female", 'value': "Female"},
             {'label': "Male", 'value': "Male"}
@@ -32,7 +33,12 @@ app.layout = html.Div([
     Output('bar_biz_travel', 'srcDoc'),
     Input('gender-widget', 'value'))
 def plot_altair(gen_value):
-    chart = alt.Chart(attrition[attrition["Gender"]== gen_value]).mark_bar().encode(
+    if gen_value == '':
+        data = df
+    else:
+        data = df[df["Gender"]== gen_value]
+    #data = df[df["Gender"]== gen_value]
+    chart = alt.Chart(data).mark_bar().encode(
         y=alt.Y("BusinessTravel", title="Frequency of Business Travel"),
         x=alt.X('count()', stack="normalize"),  # rwidth = xx or something to change the bar width
         color = "Attrition")

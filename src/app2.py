@@ -6,6 +6,7 @@ import altair as alt
 import pandas as pd
 import dash_bootstrap_components as dbc
 
+#updated data path
 df = pd.read_csv(r"data/Processed/HR_employee_Attrition_editted.csv")
 ###Convert variables to categoriccal and reordering
 df['EnvironmentSatisfaction'] = df['EnvironmentSatisfaction'].astype('category').cat.rename_categories(["Bad", "Good", "Better", "Best"])
