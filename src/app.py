@@ -8,16 +8,15 @@ import dash_bootstrap_components as dbc
 
 #updated data path
 df = pd.read_csv(r"data/Processed/HR_employee_Attrition_editted.csv")
-###Convert variables to categoriccal and reordering
-df['EnvironmentSatisfaction'] = df['EnvironmentSatisfaction'].astype('category').cat.rename_categories(["Bad", "Good", "Better", "Best"])
-df['WorkLifeBalance']=df['WorkLifeBalance'].astype('category').cat.rename_categories(["Low", "Medium", "High", "Very High"])
+###Convert variables to categoriccal and reordering by label.
+df['EnvironmentSatisfaction'] = df['EnvironmentSatisfaction'].astype('category').cat.rename_categories(["1 - Bad", "2 - Good", "3 - Better", "4 - Best"])
+df['WorkLifeBalance']=df['WorkLifeBalance'].astype('category').cat.rename_categories(["1 - Low", "2 - Medium", "3 - High", "4 - Very High"])
 df["Department"]=df["Department"].astype('category')
 df["BusinessTravel"]=df["BusinessTravel"].astype('category')
-df['BusinessTravel'] = df['BusinessTravel'].cat.rename_categories(["No Travel", "Travel Frequently", "Travel Rarely"])
-df['BusinessTravel'] = df['BusinessTravel'].cat.reorder_categories(["Travel Rarely", "Travel Frequently", "No Travel"], ordered=True)
+df['BusinessTravel'] = df['BusinessTravel'].cat.rename_categories(["1 - No Travel", "3 - Travel Frequently", "2 - Travel Rarely"])
+#df['BusinessTravel'] = df['BusinessTravel'].cat.reorder_categories(["Travel Rarely", "Travel Frequently", "No Travel"], ordered=True)
 
 # Setup app and layout/frontend
-#test heroku heroku
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 app.layout = dbc.Container([
@@ -88,7 +87,7 @@ def plot_altair(depart,gender, age=18):
     chart_worklife = alt.Chart(
         df[(df['Department']==depart) &(df['Gender']==gender)&(df['Age']>=age[0])&(df['Age']<=age[1])], 
         title='Work Life Balance').mark_bar().encode(
-        y=alt.Y('WorkLifeBalance', title=''),
+        y=alt.Y('WorkLifeBalance:O', title=''),
         x=alt.X('count()', stack = 'normalize', axis=alt.Axis(format='%'), title = 'Proportion'),
         color = 'Attrition'
     ).properties(height=200, width=250)
